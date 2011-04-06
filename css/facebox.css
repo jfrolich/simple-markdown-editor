@@ -20,7 +20,7 @@
 
 #facebox .content {
   display:table;
-  width: 800px;
+  min-width: 350px;
   padding: 10px;
   background: #fff;
   -webkit-border-radius:4px;
