@@ -1,4 +1,6 @@
 (function($) {
+  
+  // Private functions
   getSelectionPosition = function($field ) {
     if ($field.length) {
       var start = 0, end = 0
@@ -23,25 +25,19 @@
         var s = start
         var lb = 0
         var i
-        for ( i=0; i < s; i++ ) {
-          if ( el.value.charAt(i).match(/\r/) ) {
-            ++lb
-          }
-        }
+        
+        for ( i=0; i < s; i++ ) 
+          if (el.value.charAt(i).match(/\r/)) ++lb
+        
         if (lb) {
           start = start - lb
           lb = 0
         }
 
         var e = end
-        for ( i=0; i < e; i++ ) {
-          if ( el.value.charAt(i).match(/\r/) ) {
-            ++lb
-          }
-        }
-        if (lb) {
-          end = end - lb
-        }
+        for (i=0; i < e; i++)
+          if (el.value.charAt(i).match(/\r/) ) ++lb
+        if (lb) end = end - lb
       }
       return {
           start: start,
@@ -54,62 +50,71 @@
     var selStr = ''
     var selPos
 
-    if ( $field.length ) {
-      selPos = getSelectionPosition( $field )
-      selStr = $field.val().substring( selPos.start, selPos.end )
+    if ($field.length) {
+      selPos = getSelectionPosition($field)
+      selStr = $field.val().substring(selPos.start, selPos.end)
       return selStr
     }
     return false
   }
   
-  replaceSelection = function( $field, replaceText, reselect, cursorOffset ) {
-    var selPos = getSelectionPosition( $field )
+  replaceSelection = function($field, replaceText, reselect, cursorOffset) {
+    var selPos = getSelectionPosition($field)
     var fullStr = $field.val()
     var selectNew = true
-    if ( reselect === false) {
-      selectNew = false
-    }
+    if (reselect === false) selectNew = false
 
     var scrollTop = null
-    if ( $field[0].scrollTop ) {
-      scrollTop = $field[0].scrollTop
-    }
+    if ($field[0].scrollTop) scrollTop = $field[0].scrollTop
 
-    $field.val( fullStr.substring(0, selPos.start) + replaceText +
-                fullStr.substring(selPos.end) )
+    $field.val(fullStr.substring(0, selPos.start) + replaceText + fullStr.substring(selPos.end))
     $field[0].focus()
 
-    if ( selectNew ) {
-      if ( $field[0].setSelectionRange ) {
-        if ( cursorOffset ) {
+    if (selectNew) {
+      if ($field[0].setSelectionRange) {
+        if (cursorOffset) {
           $field[0].setSelectionRange(selPos.start + cursorOffset, selPos.start + cursorOffset)
         } else {
           $field[0].setSelectionRange(selPos.start, selPos.start + replaceText.length)
         }
-      } else if ( $field[0].createTextRange ) {
+      } else if ($field[0].createTextRange) {
         var range = $field[0].createTextRange()
         range.collapse( true )
-        if ( cursorOffset ) {
-          range.moveEnd( selPos.start + cursorOffset )
-          range.moveStart( selPos.start + cursorOffset )
+        if (cursorOffset) {
+          range.moveEnd(selPos.start + cursorOffset)
+          range.moveStart(selPos.start + cursorOffset)
         } else {
-          range.moveEnd( 'character', selPos.start + replaceText.length )
-          range.moveStart( 'character', selPos.start )
+          range.moveEnd('character', selPos.start + replaceText.length)
+          range.moveStart('character', selPos.start)
         }
         range.select()
       }
     }
 
-    if ( scrollTop ) {
+    if (scrollTop) {
       // this jumps sometimes in FF
       $field[0].scrollTop = scrollTop
     }
   }
   
-  executeAction = function(search, replace, append) {
-    var txt = $("textarea").val()
-    var selPos = getSelectionPosition($("textarea"))
-    var selText = getSelection( $('textarea') )
+  selectWholeLine = function($field) {
+    var selPos = getSelectionPosition( $field )
+    var el = $field.get(0)
+    var i
+    for ( i=selPos.start; i >= 0; i-- )
+      if ( el.value.charAt(i).match(/\n/) ) break
+    i++
+    $field[0].setSelectionRange(i, selPos.end)
+  }
+  
+  // Public function
+  $.markdownEditor = {}
+  $.markdownEditor.executeAction = function(editor, search, replace, whole_line, append) {
+    var textElement = $(editor).find('textarea')
+    if (whole_line) selectWholeLine(textElement)
+    var txt = textElement.val()
+    var selPos = getSelectionPosition(textElement)
+    var selText = getSelection(textElement)
     var repText = selText
     var reselect = true
     var cursor = null
@@ -120,41 +125,19 @@
       repText = repText.replace(/\$[\d]/g, '')
       if ( repText === '' ) {
         cursor = replace.indexOf('$1')
-    
+  
         repText = replace.replace( /\$[\d]/g, '' )
         if ( cursor == -1 ) cursor = Math.floor( replace.length / 2 )
       }
     }
-    
+  
     if (append) {
-      if ( repText == selText ) {
-        reselect = false
-      }
+      if ( repText == selText )  reselect = false
       repText += append
     }
-    if (repText) replaceSelection( $('textarea'), repText, reselect, cursor)
+    if (repText) replaceSelection( textElement, repText, reselect, cursor)
+    $(editor).find(".editor-body").keyup()
   }
+  
 
 })(jQuery)
-
-$(document).ready(function() {
-  $(".function-bold").bind("click", function() {
-    executeAction(/([^\n]+)([\n\s]*)/g, "**$1**$2")
-  })
-  $(".function-italic").bind("click", function() {
-    executeAction(/([^\n]+)([\n\s]*)/g, "_$1_$2")
-  })
-  $(".function-code").bind("click", function() {
-    executeAction(/(^[\n]+)([\n\s]*)/g, "`$1`$2")
-  })
-  $(".function-hr").bind("click", function() {
-    executeAction(false,false,"\n***\n")
-  })
-  $(".function-ul").bind("click", function() {
-    executeAction(/(.+)([\n]?)/g, "* $1$2")
-  })
-  $(".function-ol").bind("click", function() {
-    var n = 0
-    executeAction(/(.+)([\n]?)/g, function(str, p1, p2, offset, s) { return ++n + ". " + p1 + p2})
-  })
-})

@@ -9,6 +9,16 @@ body, html {
   padding: 0;
 }
 
+#facebox {
+  font-size: 1.3em;
+}
+
+.live-preview {
+  padding-top: 20px;
+  font-size: 1.3em;
+  clear: both;
+}
+
 a {
   -moz-outline: none !important;
 }
@@ -19,10 +29,6 @@ a {
   margin: 1em 0 5em;
   overflow: hidden;
   padding: 1em 1em 0.4em;
-
-  border-radius: 1em;
-  -moz-border-radius: 1em;
-  -webkit-border-radius: 1em;
 }
 
 .ie .editor {
@@ -31,12 +37,9 @@ a {
 
 /* @control function-bar */
 .editor .function-bar  {
-  border-bottom: 1px solid #ddd;
   overflow: hidden;
   padding: 0;
 }
-
-
 
 .editor .function-bar .function-buttons {
   display: none;
@@ -46,7 +49,7 @@ a {
   display: block;
   float: left;
   overflow: hidden;
-  padding: 0 0 1.1em 0;
+  padding: 0 0 5px 0;
 }
 
 .editor .function-bar a.function-button {
