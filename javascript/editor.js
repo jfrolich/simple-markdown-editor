@@ -81,8 +81,8 @@
         var range = $field[0].createTextRange()
         range.collapse( true )
         if (cursorOffset) {
-          range.moveEnd(selPos.start + cursorOffset)
-          range.moveStart(selPos.start + cursorOffset)
+          range.moveEnd('character', selPos.start + cursorOffset)
+          range.moveStart('character', selPos.start + cursorOffset)
         } else {
           range.moveEnd('character', selPos.start + replaceText.length)
           range.moveStart('character', selPos.start)
