@@ -1,5 +1,5 @@
 (function($) {
-  
+  var getSelectionPosition,getSelection,replaceSelection,selectWholeLine,addFunctionBar,makeBindings;
   // Private functions
   getSelectionPosition = function($field ) {
     if ($field.length) {
@@ -176,9 +176,10 @@
         </div>\
       </div>')
   }
-  
+   var converter = markdown;
+   converter.makeHtml=markdown.toHTML;
   makeBindings = function($editor) {
-    var converter = new Showdown.converter;
+    // var converter = new Showdown.converter;
     $editor
     .delegate(".function-button", "click", function(e){
       e.preventDefault
