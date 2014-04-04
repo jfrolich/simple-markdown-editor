@@ -12,7 +12,7 @@
   padding: 0;
 }
 #facebox {font-size: 12px;}
-#facebox a:link,a:visited{color: #428bca}
+#facebox a:link,#facebox a:visited{color: #428bca}
 #facebox .preview {
   font-size: 1.3em;
 }
