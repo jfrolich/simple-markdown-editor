@@ -2,19 +2,17 @@
   editor.css
   Wiki editor formatting
 */
-body, html {
+.editor ,input.submit,#facebox  {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 10px; /* -> 1em */
   margin: 0;
   padding: 0;
-}
-fieldset {
   border: 0;
   margin: 0;
   padding: 0;
 }
-
-
+#facebox {font-size: 12px;}
+.popup a:link,.popup a:visited{color: #428bca}
 #facebox .preview {
   font-size: 1.3em;
 }
@@ -303,4 +301,10 @@ input.submit:hover {
   float: left;
   font-weight: normal;
   padding: left;
+}
+
+.buttons:after{
+  content: "";
+  display: block;
+  clear: both;
 }

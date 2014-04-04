@@ -1,6 +1,7 @@
 (function($) {
-  
+  var getSelectionPosition,getSelection,replaceSelection,selectWholeLine,addFunctionBar,makeBindings;
   // Private functions
+
   getSelectionPosition = function($field ) {
     if ($field.length) {
       var start = 0, end = 0
@@ -176,12 +177,13 @@
         </div>\
       </div>')
   }
-  
+   var converter = markdown;
+   converter.makeHtml=markdown.toHTML;
   makeBindings = function($editor) {
-    var converter = new Showdown.converter;
+    // var converter = new Showdown.converter;
     $editor
     .delegate(".function-button", "click", function(e){
-      e.preventDefault
+      e.preventDefault();
     })
     .delegate(".function-bold","click", function() {
       $.markdownEditor.executeAction($editor, /([^\n]+)([\n\s]*)/g, "**$1**$2")
@@ -215,17 +217,37 @@
       $.markdownEditor.executeAction($editor, /(.+)([\n]?)/g, "### $1$2", true)
     })
     .delegate(".function-link", "click", function() {
-      console.log($editor)
-      $.facebox('<div id="markdown-editor-dialog"><h4>Insert Link</h4><fieldset><div class="field"><label for="Link Text">Link Text</label><input type="text" class="text" value="' + getSelection($editor.find(".editor-body")) + '"></div><div class="field"><label for="URL">URL</label><input type="text" class="href"></div></fieldset><div class="buttons"><a href="#" title="Cancel" class="cancel minibutton">Cancel</a><a href="#" title="OK" class="ok minibutton">OK</a></div></div>')
-      $("#markdown-editor-dialog").data("editor", $editor)
+      $.facebox('<div id="markdown-editor-dialog"><h4>Insert Link</h4><fieldset><div class="field"><label for="LinkText">Link Text</label><input id="LinkText" type="text" class="text" value="' + getSelection($editor.find(".editor-body")) + '"></div><div class="field"><label for="URL">URL</label><input type="text" class="href"></div></fieldset><div class="buttons "><a href="#" title="Cancel" class="cancel minibutton">Cancel</a><a href="#" title="OK" class="ok minibutton">OK</a></div></div>')
+      $("#markdown-editor-dialog").data('dialog-type','link')
     })
+    .delegate('.function-image','click',function(){
+      //![drawing](drawing.jpg)
+      $.facebox('<div id="markdown-editor-dialog"><h4>Insert Image</h4><fieldset><div class="field"><label for="ImageText">Image Text</label><input id="ImageText" type="text" class="alt" value="' + getSelection($editor.find(".editor-body")) + '"></div><div class="field"><label for="imagesrc">Image URL</label><input id="imagesrc" type="text" class="src"></div></fieldset><div class="buttons "><a href="#" title="Cancel" class="cancel minibutton">Cancel</a><a href="#" title="OK" class="ok minibutton">OK</a></div></div>')
+
+      $("#markdown-editor-dialog").data('dialog-type','image');
+    })
+    .delegate('.function-help','click',function(){
+      $.facebox('<h4>Simple Markdown Editor</h4><p>a simple markdown editor</p><p>based on '+
+        '<a href="https://github.com/JFrolich/simple-markdown-editor" target="_blank">JFrolich/simple-markdown-editor</a><p/><p>'+
+        'see @github <a href="https://github.com/bung87/simple-markdown-editor" target="_blank">bung87/simple-markdown-editor</a></p>'
+        );
+    });
     
     $("body").delegate(".ok", "click", function() {
-      dialog = $(this).closest("#markdown-editor-dialog")
-      href = dialog.find(".href").val() 
-      text = dialog.find(".text").val()
+      var dialog = $("#markdown-editor-dialog")
+      var dialogType=dialog.data('dialog-type')
+      if (dialogType=='link'){
+        var href = dialog.find(".href").val();
+        var text = dialog.find(".text").val();
       if (href && text)
-        $.markdownEditor.executeAction(dialog.data("editor"), /([\s\S]*)/, '[' + text + '](' +  href + ')')
+        $.markdownEditor.executeAction($editor, /([\s\S]*)/, '[' + text + '](' +  href + ')');
+      }else if(dialogType=='image'){
+        var alt = dialog.find(".alt").val();
+        var src = dialog.find(".src").val();
+        if (alt && src)
+        $.markdownEditor.executeAction($editor, /([\s\S]*)/, '![' + alt + '](' +  src + ')');
+      }
+      
       $.facebox.close()
     })
     

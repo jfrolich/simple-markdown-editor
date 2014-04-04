@@ -6,7 +6,7 @@
   text-align: left;
 }
 
-
+#facebox fieldset{border: 0;margin: 0}
 #facebox .popup{
   position:relative;
   border:3px solid rgba(0,0,0,0);
@@ -20,12 +20,13 @@
 
 #facebox .content {
   display:table;
-  min-width: 350px;
+  width: 370px;
   padding: 10px;
   background: #fff;
   -webkit-border-radius:4px;
   -moz-border-radius:4px;
   border-radius:4px;
+  box-sizing: border-box;
 }
 
 #facebox .content > p:first-child{
@@ -36,11 +37,14 @@
 }
 
 #facebox .close{
+  display: block;
+  width: 8px;
+  height: 8px;
   position:absolute;
   top:5px;
   right:5px;
-  padding:2px;
-  background:#fff;
+  /*padding:2px;*/
+  background:#fff url(./closelabel.png);
 }
 #facebox .close img{
   opacity:0.3;
@@ -50,6 +54,7 @@
 }
 
 #facebox .loading {
+  background: url(./loading.gif);
   text-align: center;
 }
 
@@ -66,7 +71,7 @@
   position: fixed;
   top: 0px;
   left: 0px;
-  min-height:100%;
+  height:100%;
   width:100%;
 }
 
