@@ -183,7 +183,7 @@
     // var converter = new Showdown.converter;
     $editor
     .delegate(".function-button", "click", function(e){
-      e.preventDefault
+      e.preventDefault();
     })
     .delegate(".function-bold","click", function() {
       $.markdownEditor.executeAction($editor, /([^\n]+)([\n\s]*)/g, "**$1**$2")
